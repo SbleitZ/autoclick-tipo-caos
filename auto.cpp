@@ -1,6 +1,8 @@
 #include <iostream>
 #include <windows.h>
-#include <stdio.h>
+#include <random>
+#include <chrono>
+#include <thread>
 /**
  * @author Sbleit
  * @see github.com/sbleitz
@@ -51,6 +53,8 @@ void introDatos(char slash, int posX, int posY){
 
 int main()
 {
+    std::random_device rd;
+    std::mt19937 gen(rd());
     char slash = 92;
     introDatosDelay(slash);
     SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 15);
@@ -63,6 +67,7 @@ int main()
     cout<<"Setpoint actual : X: "<<setpoint.x<<" Y: "<<setpoint.y<<endl;
     system("cls");
     introDatos(slash,setpoint.x,setpoint.y);
+    std::uniform_int_distribution<int> distribucion(velocidad/2,velocidad);
     while (true)
     {
         // Revisamos si se ha presionado alguna de las teclas F7, F8 o F9
@@ -105,7 +110,7 @@ int main()
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             SetCursorPos(cursorPos.x, cursorPos.y);
-            Sleep(velocidad);
+            std::this_thread::sleep_for(std::chrono::milliseconds(distribucion(gen)));
         }
 
         // Esperamos un poco antes de volver a revisar las teclas
